@@ -1,6 +1,7 @@
+import { memo } from "react";
 import MagnifyingGlass from "./svgs/MagnifyingGlass";
 
-export default function InputField() {
+function InputField() {
   return (
     <div className="w-full h-7 rounded-md bg-[#00000011] border border-[#0000001a] flex items-center px-[6px]">
       <MagnifyingGlass />
@@ -11,3 +12,5 @@ export default function InputField() {
     </div>
   )
 }
+
+export default memo(InputField)

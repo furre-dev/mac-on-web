@@ -1,4 +1,6 @@
-export default function SquareAndPencil() {
+import { memo } from "react";
+
+function SquareAndPencil() {
   return (
     <button>
       <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -7,3 +9,5 @@ export default function SquareAndPencil() {
     </button>
   )
 }
+
+export default memo(SquareAndPencil)

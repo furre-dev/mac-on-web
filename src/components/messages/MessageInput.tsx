@@ -11,7 +11,6 @@ type MessageInputProps = {
 }
 
 export default function MessageInput({ updateMessageInput, inputValue, sendMessage }: MessageInputProps) {
-
   return (
     <form
       onSubmit={sendMessage}

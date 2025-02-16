@@ -3,7 +3,7 @@ import { isLastMessage } from "@/utils/isLastMessage";
 import ChatBubble from "../ChatBubble";
 import { MessageFeed } from "@/types/messageTypes";
 import { getCurrentTime } from "@/utils/getCurrentTime";
-import { RefObject } from "react";
+import { memo, RefObject } from "react";
 import IsWriting from "../svgs/IsWriting";
 import { AnimatePresence } from "framer-motion";
 import { sameSenderAsPreviousMessage } from "@/utils/sameSenderAsPreviousMessage";
@@ -16,7 +16,8 @@ type MessageProps = {
   isWriting?: boolean,
 }
 
-export default function Messages({ messageFeed, ref, animateChat, isWriting }: MessageProps) {
+function Messages({ messageFeed, ref, animateChat, isWriting }: MessageProps) {
+
   const currentTime = getCurrentTime();
 
   return (
@@ -46,7 +47,8 @@ export default function Messages({ messageFeed, ref, animateChat, isWriting }: M
             <div ref={ref} className="w-full h-[1px]"></div>
           </ul>
         </>)}
-
     </div>
   )
-}
+};
+
+export default memo(Messages);

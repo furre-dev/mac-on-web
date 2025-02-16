@@ -23,7 +23,7 @@ type MessageContextType = {
 const MessagesContext = createContext<MessageContextType | undefined>(undefined);
 
 export function MessageProvider({ children }: { children: React.ReactNode }) {
-  const { contactsList, activeContact, firstRender } = useContact();
+  const { contactsList, activeContactId, firstRender } = useContact();
 
   const initialMessageInputs: MessageInput[] | undefined = contactsList?.map((contact) => {
     return {
@@ -54,14 +54,14 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
   }
 
   const updateMessageInput = (e: ChangeEvent<HTMLInputElement>) => {
-    if (!activeContact || !messageInputs) return null;
+    if (!activeContactId || !messageInputs) return null;
 
     const message = e.target.value;
 
     // only affect the input of the current contact.
     setMessageInputs((prevMessages) =>
       prevMessages?.map((input) =>
-        input.contact_id === activeContact
+        input.contact_id === activeContactId
           ? { ...input, message }
           : input
       )
@@ -73,7 +73,7 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
 
     setMessageInputs((prev) => {
       return prev?.map((input) =>
-        input.contact_id === activeContact ? { ...input, message: "" } : input
+        input.contact_id === activeContactId ? { ...input, message: "" } : input
       );
     });
 
@@ -88,11 +88,11 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
     const messagesFromLocaleStorage = getMessagesFromLocaleStorage();
     let updatedMessages = messagesFromLocaleStorage || initialConversations;
 
-    const currentFeed = updatedMessages.find((conversation) => conversation.contact_id === activeContact);
+    const currentFeed = updatedMessages.find((conversation) => conversation.contact_id === activeContactId);
 
-    if (!currentFeed && activeContact) {
+    if (!currentFeed && activeContactId) {
       const newConversation: Conversation = {
-        contact_id: activeContact,
+        contact_id: activeContactId,
         messages: [{ content: message, sender: "user" }]
       };
       updatedMessages.push(newConversation);
@@ -103,21 +103,21 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
     sendMessagesToLocaleStorage(updatedMessages);
 
     // **Update messageFeed state to trigger UI update**
-    setMessageFeed([...updatedMessages.find((msg) => msg.contact_id === activeContact)?.messages ?? []]);
+    setMessageFeed([...updatedMessages.find((msg) => msg.contact_id === activeContactId)?.messages ?? []]);
   }, [messageFeed]);
 
-  const currentValue = messageInputs?.find((input) => input.contact_id === activeContact)?.message ?? "";
+  const currentValue = messageInputs?.find((input) => input.contact_id === activeContactId)?.message ?? "";
 
   // useEffect to update update the message feed to the correct contact, each time the contact is changed.
   useEffect(() => {
     if (loading) return;
 
-    const messageFeed = findMessageFeedByID(activeContact)
+    const messageFeed = findMessageFeedByID(activeContactId)
 
     setMessageFeed(messageFeed);
 
     firstRender.current = true;
-  }, [activeContact, loading]);
+  }, [activeContactId, loading]);
 
   // useEffect to render the "partner is writing" icon.
   useEffect(() => {
@@ -131,7 +131,7 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
           const typingTimeout = setTimeout(() => {
             setIsWriting({
               isTrue: true,
-              contact_id: activeContact
+              contact_id: activeContactId
             });
           }, randomTypingDelay);
 

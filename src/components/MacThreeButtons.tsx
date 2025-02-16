@@ -1,12 +1,10 @@
 "use client";
 import { windowControlButtons } from "@/utils/windowControlButtons";
 import WindowControlButton from "./svgs/controls/WindowControlButton";
-import { useState } from "react";
+import { memo, useState } from "react";
 
-export default function MacThreeButtons() {
+function MacThreeButtons() {
   const [hovering, setHovering] = useState<boolean | null>(null);
-
-
   return (
     <div className="space-x-2">
       {windowControlButtons.map((btn, i) => {
@@ -28,3 +26,5 @@ export default function MacThreeButtons() {
     </div>
   )
 }
+
+export default memo(MacThreeButtons);
