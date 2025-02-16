@@ -2,7 +2,7 @@ import { createContext, RefObject, useCallback, useContext, useEffect, useMemo, 
 import { contacts } from "@/utils/database/contacts/contacts";
 import { Contact, ContactId } from "@/types/contactTypes";
 import { initialConversations } from "@/utils/database/messages/messages";
-import { Message, MessageFeed } from "@/types/messageTypes";
+import { Message, MessageFeed, MessageInput } from "@/types/messageTypes";
 import { getMessagesFromLocaleStorage } from "@/utils/localeStorageMessages";
 
 type ContactContextType = {
@@ -10,7 +10,7 @@ type ContactContextType = {
   setActive: (id: ContactId) => void;
   isActiveContact: (contact: Contact) => boolean
   currentContact: Contact | undefined;
-  contactsList: Contact[] | null;
+  initialMessageInputs: MessageInput[] | undefined;
   firstRender: RefObject<boolean>
 };
 
@@ -30,13 +30,20 @@ export function ContactProvider({ children }: { children: React.ReactNode }) {
 
   const contactsList = contacts;
 
+  const initialMessageInputs: MessageInput[] | undefined = contactsList?.map((contact) => {
+    return {
+      contact_id: contact.id,
+      message: null
+    }
+  });
+
   return (
     <ContactContext.Provider value={{
       activeContactId,
       setActive,
       isActiveContact,
       currentContact,
-      contactsList,
+      initialMessageInputs,
       firstRender
     }}>
       {children}

@@ -5,6 +5,10 @@ export function getLastMessage(feed: MessageFeed) {
 
   const length = feed.length;
 
+  if (length < 1) {
+    return null;
+  }
+
   const message = feed[length - 1].content;
 
   if (message.length > 79) {

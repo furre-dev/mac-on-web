@@ -17,7 +17,6 @@ type MessageProps = {
 }
 
 function Messages({ messageFeed, ref, animateChat, isWriting }: MessageProps) {
-
   const currentTime = getCurrentTime();
 
   return (

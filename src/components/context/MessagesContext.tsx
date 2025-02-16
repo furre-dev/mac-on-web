@@ -1,9 +1,16 @@
-import { ChangeEvent, createContext, FormEvent, RefObject, useCallback, useContext, useEffect, useRef, useState } from "react";
-import { Contact, ContactId } from "@/types/contactTypes";
+import { ChangeEvent, createContext, FormEvent, RefObject, useCallback, useContext, useEffect, useMemo, useReducer, useRef, useState } from "react";
+import { ContactId } from "@/types/contactTypes";
 import { Conversation, initialConversations } from "@/utils/database/messages/messages";
 import { Message, MessageFeed, MessageInput } from "@/types/messageTypes";
 import { getMessagesFromLocaleStorage, sendMessagesToLocaleStorage } from "@/utils/localeStorageMessages";
 import { useContact } from "./ContactContext";
+import { ActionType, initialState, messageReducer, Status } from "@/utils/messageReducer";
+import { messageFromInput } from "@/utils/messageFromInput";
+
+type IsWriting = {
+  isTrue: boolean,
+  contact_id: ContactId | null
+}
 
 type MessageContextType = {
   currentValue: string,
@@ -12,10 +19,7 @@ type MessageContextType = {
   messageFeed: MessageFeed | null,
   scrollViewRef: RefObject<HTMLDivElement | null>,
   firstRender: RefObject<boolean>,
-  isWriting: {
-    isTrue: boolean,
-    contact_id: ContactId | null
-  } | null,
+  isWriting: IsWriting | null,
   findMessageFeedByID: (id: ContactId | null) => Message[] | undefined,
   loading: boolean
 };
@@ -23,23 +27,17 @@ type MessageContextType = {
 const MessagesContext = createContext<MessageContextType | undefined>(undefined);
 
 export function MessageProvider({ children }: { children: React.ReactNode }) {
-  const { contactsList, activeContactId, firstRender } = useContact();
-
-  const initialMessageInputs: MessageInput[] | undefined = contactsList?.map((contact) => {
-    return {
-      contact_id: contact.id,
-      message: null
-    }
-  });
-
+  const { activeContactId, firstRender, initialMessageInputs } = useContact();
+  const [state, send] = useReducer(messageReducer, initialState);
   const [loading, setLoading] = useState<boolean>(true);
   const [messageInputs, setMessageInputs] = useState<MessageInput[] | undefined>(initialMessageInputs);
-  const [messageFeed, setMessageFeed] = useState<MessageFeed | null>(null);
-  const [isWriting, setIsWriting] = useState<{
-    isTrue: boolean,
-    contact_id: ContactId | null
-  } | null>(null);
+  const [conversations, setConversations] = useState<Conversation[] | null>(null);
+  const [isWriting, setIsWriting] = useState<IsWriting | null>(null);
   const scrollViewRef = useRef<HTMLDivElement | null>(null);
+
+  const currentValue = messageInputs?.find((input) => input.contact_id === activeContactId)?.message ?? "";
+  const conversation = conversations?.find((c) => c.contact_id === activeContactId);
+  const messageFeed = conversation?.messages;
 
   useEffect(() => {
     setLoading(false);
@@ -68,8 +66,11 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
     );
   }
 
-  const sendMessage = useCallback((e: FormEvent<HTMLFormElement>) => {
+
+  const sendMessage = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (!conversations || !activeContactId) return null;
 
     setMessageInputs((prev) => {
       return prev?.map((input) =>
@@ -77,79 +78,57 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
       );
     });
 
-    const form = e.currentTarget;
-    const formData = new FormData(form);
-    const message = formData.get("message") as string;
-
-    if (message.trim() === "") {
+    const { message, messageIsEmpty } = messageFromInput(e);
+    if (messageIsEmpty) {
       return null
     }
 
-    const messagesFromLocaleStorage = getMessagesFromLocaleStorage();
-    let updatedMessages = messagesFromLocaleStorage || initialConversations;
+    const newMessage: Message = { sender: "user", content: message }
 
-    const currentFeed = updatedMessages.find((conversation) => conversation.contact_id === activeContactId);
+    setConversations((prev) => {
+      if (!prev) return null;
 
-    if (!currentFeed && activeContactId) {
-      const newConversation: Conversation = {
-        contact_id: activeContactId,
-        messages: [{ content: message, sender: "user" }]
-      };
-      updatedMessages.push(newConversation);
-    } else {
-      currentFeed?.messages.push({ content: message, sender: "user" });
-    }
+      return prev.map((conv) =>
+        conv.contact_id === activeContactId ? { ...conv, messages: [...conv.messages, newMessage] } : conv
+      );
+    });
 
-    sendMessagesToLocaleStorage(updatedMessages);
+    send({ type: ActionType.SEND_MESSAGE });
+  };
 
-    // **Update messageFeed state to trigger UI update**
-    setMessageFeed([...updatedMessages.find((msg) => msg.contact_id === activeContactId)?.messages ?? []]);
-  }, [messageFeed]);
-
-  const currentValue = messageInputs?.find((input) => input.contact_id === activeContactId)?.message ?? "";
-
-  // useEffect to update update the message feed to the correct contact, each time the contact is changed.
   useEffect(() => {
-    if (loading) return;
+    if (!conversations) return;
 
-    const messageFeed = findMessageFeedByID(activeContactId)
+    sendMessagesToLocaleStorage(conversations);
+  }, [conversations]);
 
-    setMessageFeed(messageFeed);
-
-    firstRender.current = true;
-  }, [activeContactId, loading]);
-
-  // useEffect to render the "partner is writing" icon.
+  // useEffect to render "partner is writing" icon
   useEffect(() => {
-    if (firstRender.current === false) {
-      //check if last message is sent from user
-      if (messageFeed?.length) {
-        const lastMessage = messageFeed[messageFeed.length - 1];
+    console.log(state.status);
+    if (state.status === Status.WAITING_FOR_RESPONSE) {
+      //TODO: Handle AI chatbot response here.
+      const startTypingTimeout = setTimeout(() => {
+        setIsWriting({
+          isTrue: true,
+          contact_id: activeContactId
+        });
+      }, 1000);
 
-        if (lastMessage.sender === "user") {
-          const randomTypingDelay = Math.random() * 1000 + 500; // 500ms to 1500ms delay
-          const typingTimeout = setTimeout(() => {
-            setIsWriting({
-              isTrue: true,
-              contact_id: activeContactId
-            });
-          }, randomTypingDelay);
+      const stopTypingTimeout = setTimeout(() => {
+        send({ type: ActionType.SET_IDLE })
+      }, 3000);
 
-          const stopTypingTimeout = setTimeout(() => {
-            setIsWriting({
-              isTrue: false,
-              contact_id: null
-            });
-          }, randomTypingDelay + 3000); // Ensure writing lasts for at least 1s
-
-          return () => {
-            clearTimeout(typingTimeout);
-            clearTimeout(stopTypingTimeout);
-          };
-        }
+      return () => {
+        clearTimeout(stopTypingTimeout)
+        clearTimeout(startTypingTimeout)
       }
     }
-  }, [messageFeed])
+
+    setIsWriting({
+      isTrue: false,
+      contact_id: null
+    });
+  }, [state.status]);
 
   // useEffect to scroll to the bottom each time
   useEffect(() => {
@@ -159,10 +138,23 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
         firstRender.current = false;
       } else {
         scrollViewRef.current.scrollIntoView({ behavior: "smooth" });
-
       }
     };
   }, [messageFeed?.length, isWriting]);
+
+  useEffect(() => {
+    const messagesFromLocaleStorage = getMessagesFromLocaleStorage();
+    let conversations = messagesFromLocaleStorage || initialConversations;
+    const currentConversation = conversations.find((c) => c.contact_id === activeContactId);
+    if (!currentConversation && activeContactId) {
+      conversations.push({
+        contact_id: activeContactId,
+        messages: []
+      })
+    }
+
+    setConversations(conversations);
+  }, [activeContactId]);
 
   return (
     <MessagesContext.Provider value={{
