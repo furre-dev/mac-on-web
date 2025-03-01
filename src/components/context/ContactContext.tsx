@@ -11,13 +11,11 @@ type ContactContextType = {
   isActiveContact: (contact: Contact) => boolean
   currentContact: Contact | undefined;
   initialMessageInputs: MessageInput[] | undefined;
-  firstRender: RefObject<boolean>
 };
 
 const ContactContext = createContext<ContactContextType | undefined>(undefined);
 
 export function ContactProvider({ children }: { children: React.ReactNode }) {
-  const firstRender = useRef(true);
   const [activeContactId, setActiveContact] = useState<ContactId | null>(null);
 
   const setActive = (contactId: ContactId) => {
@@ -44,7 +42,6 @@ export function ContactProvider({ children }: { children: React.ReactNode }) {
       isActiveContact,
       currentContact,
       initialMessageInputs,
-      firstRender
     }}>
       {children}
     </ContactContext.Provider>

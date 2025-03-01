@@ -27,13 +27,14 @@ type MessageContextType = {
 const MessagesContext = createContext<MessageContextType | undefined>(undefined);
 
 export function MessageProvider({ children }: { children: React.ReactNode }) {
-  const { activeContactId, firstRender, initialMessageInputs } = useContact();
+  const { activeContactId, initialMessageInputs } = useContact();
   const [state, send] = useReducer(messageReducer, initialState);
   const [loading, setLoading] = useState<boolean>(true);
   const [messageInputs, setMessageInputs] = useState<MessageInput[] | undefined>(initialMessageInputs);
   const [conversations, setConversations] = useState<Conversation[] | null>(null);
   const [isWriting, setIsWriting] = useState<IsWriting | null>(null);
   const scrollViewRef = useRef<HTMLDivElement | null>(null);
+  const firstRender = useRef(true);
 
   const currentValue = messageInputs?.find((input) => input.contact_id === activeContactId)?.message ?? "";
   const conversation = conversations?.find((c) => c.contact_id === activeContactId);
@@ -84,6 +85,8 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
     }
 
     const newMessage: Message = { sender: "user", content: message }
+
+    firstRender.current = false;
 
     setConversations((prev) => {
       if (!prev) return null;
@@ -143,6 +146,7 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
   }, [messageFeed?.length, isWriting]);
 
   useEffect(() => {
+    firstRender.current = true;
     const messagesFromLocaleStorage = getMessagesFromLocaleStorage();
     let conversations = messagesFromLocaleStorage || initialConversations;
     const currentConversation = conversations.find((c) => c.contact_id === activeContactId);

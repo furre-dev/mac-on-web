@@ -1,9 +1,12 @@
 "use client";
-import IMessage from "../applications/IMessage";
+import AppDock from "../AppDock";
+import Applications from "../applications/Applications";
 
 export default function Home() {
-
   return (
-    <IMessage />
+    <>
+      <Applications />
+      <AppDock />
+    </>
   );
 }

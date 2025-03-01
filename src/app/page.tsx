@@ -10,7 +10,9 @@ export default function Page() {
 
   return (
     <AnimatePresence mode="wait">
-      {loading ? <LoadingScreen key="loading" /> : <Home key="home" />}
+      {loading ?
+        <LoadingScreen key="loading" /> :
+        <Home key="home" />}
     </AnimatePresence>
   )
 }

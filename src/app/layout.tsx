@@ -34,7 +34,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${SFProDisplay.className} antialiased min-h-screen overflow-hidden`}>
+      <body className={`${SFProDisplay.className} antialiased min-h-screen overflow-hidden flex justify-center`}>
         <ContactProvider>
           <MessageProvider>
             {children}
