@@ -12,7 +12,7 @@ function ContactSection({ handleMouseClick }: { handleMouseClick: (e: MouseEvent
       <nav
         onMouseDown={handleMouseClick}
         className="w-full h-14 pl-8 pr-4 flex items-center justify-between">
-        <MacThreeButtons />
+        <MacThreeButtons application_name="iMessage" />
         <SquareAndPencil />
       </nav>
       <div className="w-[93%]">

@@ -12,6 +12,7 @@ import {
 } from 'framer-motion';
 import Image from 'next/image';
 import { useRef } from 'react';
+import { useApplications } from './context/ApplicationsContext';
 
 const SCALE = 2.25; // max scale factor of an icon
 const DISTANCE = 110; // pixels before mouse affects an icon
@@ -56,6 +57,7 @@ export default function Dock() {
             {applications[i]}
           </AppIcon>
         ))}
+
         <AppIcon key={trashCan.application_name} mouseLeft={mouseLeft}>
           {trashCan}
         </AppIcon>
@@ -86,6 +88,8 @@ function AppIcon({
   mouseLeft: MotionValue;
   children: Application | TrashCan;
 }) {
+  const { openApp } = useApplications();
+
   const ref = useRef<HTMLButtonElement>(null);
 
   const distance = useTransform(() => {
@@ -112,10 +116,12 @@ function AppIcon({
   const xSpring = useSpring(x, SPRING);
   const y = useMotionValue(0);
 
+  const isTrashCan = children.application_name === "trash";
+
   return (
     <motion.button
       ref={ref}
-      style={{ x: xSpring, scale: scaleSpring, y }}
+      style={{ x: xSpring, scale: scaleSpring, y, marginLeft: isTrashCan ? 10 : 0 }}
       onClick={() => {
         animate(y, [0, -40, 0], {
           repeat: 2,
@@ -125,6 +131,7 @@ function AppIcon({
           ],
           duration: 0.7,
         });
+        openApp(children.application_name)
       }}
       className="aspect-square block w-10 rounded-full origin-bottom"
     >

@@ -2,7 +2,7 @@ import { StaticImageData } from "next/image"
 import { ComponentType, JSX, ReactElement } from "react"
 
 export type Application = {
-  component: ComponentType,
+  component?: ComponentType,
   image_src: StaticImageData,
   application_name: string,
 }
