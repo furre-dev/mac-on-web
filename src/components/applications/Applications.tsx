@@ -1,7 +1,5 @@
 "use client";
-import { Application } from "@/types/applicationTypes";
 import { applications } from "@/utils/applications";
-import { useState } from "react";
 import { useApplications } from "../context/ApplicationsContext";
 
 export default function Applications() {

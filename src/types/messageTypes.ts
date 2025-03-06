@@ -3,7 +3,7 @@ import { ContactId } from "./contactTypes"
 export type MessageSender = "user" | "system"
 
 export type Message = {
-  sender: MessageSender,
+  role: MessageSender,
   content: string,
 }
 

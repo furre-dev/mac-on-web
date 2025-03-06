@@ -5,6 +5,7 @@ import IMessageImage from "../../public/assets/imessage-logo.jpg"
 import TrashCanImage from "../../public/assets/trash-empty.png"
 import SafariImage from "../../public/assets/safari-icon.jpg"
 import MailImage from "../../public/assets/mail.jpg"
+import AppDoesNotExist from "@/components/applications/AppDoesNotExist";
 
 export const applications: Application[] = [
   {
@@ -14,10 +15,12 @@ export const applications: Application[] = [
   },
   {
     application_name: "safari",
+    component: () => AppDoesNotExist({ application_name: "safari" }),
     image_src: SafariImage
   },
   {
     application_name: "mail",
+    component: () => AppDoesNotExist({ application_name: "mail" }),
     image_src: MailImage
   }
 ];

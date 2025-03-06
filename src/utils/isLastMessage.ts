@@ -15,17 +15,17 @@ export const isLastMessage = (messageFeed: MessageFeed, index: number) => {
     // if there is no previous message means this is the FIRST message in the feed.
     // return TRUE if this message is the ONLY message in the feed & return TRUE if the following message is a different sender.
     // return false if this message is the first message, but the next message is same sender.
-    return messageFeed.length === 1 || currentMessage.sender !== nextMessage.sender
+    return messageFeed.length === 1 || currentMessage.role !== nextMessage.role
   }
 
   // no matter what, if next message is also from sender, return false.
   if (nextMessage) {
-    const nextMessageFromSameSender = currentMessage.sender === nextMessage.sender;
+    const nextMessageFromSameSender = currentMessage.role === nextMessage.role;
     return !nextMessageFromSameSender
   }
 
   const lastMessageOfEntireFeed = index === messageFeed.length - 1;
-  const previousMessageFromSameSender = currentMessage.sender === previousMessage.sender;
+  const previousMessageFromSameSender = currentMessage.role === previousMessage.role;
 
   const isLast = lastMessageOfEntireFeed || previousMessageFromSameSender;
 

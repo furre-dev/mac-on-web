@@ -1,7 +1,8 @@
 [
   {
     "contact_name": "Furkan Abay",
-    "id": "ba64641f-9ac8-4470-a310-2bf31e2b2e4e"
+    "id": "ba64641f-9ac8-4470-a310-2bf31e2b2e4e",
+    "canReply": true
   },
   {
     "contact_name": "My Projects",

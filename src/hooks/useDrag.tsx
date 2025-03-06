@@ -1,7 +1,12 @@
-import { MouseEvent, useCallback, useEffect, useRef, useState } from "react";
+import { MouseEvent, RefObject, useCallback, useEffect, useRef, useState } from "react";
 
-export default function useDrag() {
-  const [position, setPosition] = useState({ x: 100, y: 100 });
+export default function useDrag(positionMiddle?: boolean) {
+  const positions = positionMiddle ? {
+    x: window.innerWidth / 2 - 300,
+    y: 200,
+  } : { x: 120, y: 120 }
+
+  const [position, setPosition] = useState(positions);
   const [dragging, setDragging] = useState(false);
   const offset = useRef({ x: 0, y: 0 });
 

@@ -9,7 +9,7 @@ export function sameSenderAsPreviousMessage(messageFeed: MessageFeed, index: num
   // if the message is the first message of the entire feed, return true.
   if (!previousMessage) return true;
 
-  const sameSender = currentMessage.sender === previousMessage.sender;
+  const sameSender = currentMessage.role === previousMessage.role;
 
   // if same sender return true, if different sender return false
   return sameSender;

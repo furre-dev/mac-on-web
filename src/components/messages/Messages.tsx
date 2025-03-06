@@ -6,7 +6,6 @@ import { getCurrentTime } from "@/utils/getCurrentTime";
 import { memo, RefObject } from "react";
 import IsWriting from "../svgs/IsWriting";
 import { AnimatePresence } from "framer-motion";
-import { sameSenderAsPreviousMessage } from "@/utils/sameSenderAsPreviousMessage";
 import { currentMessageData } from "@/utils/currentMessageData";
 
 type MessageProps = {
@@ -35,7 +34,7 @@ function Messages({ messageFeed, ref, animateChat, isWriting }: MessageProps) {
                   animateChat={animateChat}
                   key={i}
                   content={message.content}
-                  sender={message.sender}
+                  role={message.role}
                   isLast={isLast}
                 />
               )

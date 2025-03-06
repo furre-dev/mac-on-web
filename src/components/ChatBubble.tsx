@@ -9,8 +9,8 @@ type ChatBubbleProps = Message & {
   sameSenderAsPrev: boolean | null
 }
 
-export default function ChatBubble({ sender, content, isLast, animateChat, sameSenderAsPrev }: ChatBubbleProps) {
-  const messageIsFromUser = sender === "user";
+export default function ChatBubble({ role, content, isLast, animateChat, sameSenderAsPrev }: ChatBubbleProps) {
+  const messageIsFromUser = role === "user";
   const chatColor = messageIsFromUser ? "#278EFF" : "#E9E8EB";
   const textColor = messageIsFromUser ? "#FFFFFF" : "#242424";
 
@@ -25,7 +25,7 @@ export default function ChatBubble({ sender, content, isLast, animateChat, sameS
       }}
       className={`${sameSenderAsPrev ? "" : "!mt-[10px]"} max-w-[64.92%] w-max rounded-[16.25px] text-[13px] relative ml-auto py-[6.5px] px-[11px] font-medium`}>
       <p className="break-words">{content}</p>
-      {isLast && <MessageEdge sender={sender} />}
+      {isLast && <MessageEdge sender={role} />}
     </m.li>
   )
 }

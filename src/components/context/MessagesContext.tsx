@@ -6,6 +6,7 @@ import { getMessagesFromLocaleStorage, sendMessagesToLocaleStorage } from "@/uti
 import { useContact } from "./ContactContext";
 import { ActionType, initialState, messageReducer, Status } from "@/utils/messageReducer";
 import { messageFromInput } from "@/utils/messageFromInput";
+import { getResponseMessageFromApi } from "@/utils/api/getResponseMessageFromApi";
 
 type IsWriting = {
   isTrue: boolean,
@@ -15,7 +16,7 @@ type IsWriting = {
 type MessageContextType = {
   currentValue: string,
   updateMessageInput: (e: ChangeEvent<HTMLInputElement>) => null | undefined,
-  sendMessage: (e: FormEvent<HTMLFormElement>) => null | undefined,
+  sendMessage: (e: FormEvent<HTMLFormElement>) => Promise<null | undefined>,
   messageFeed: MessageFeed | null,
   scrollViewRef: RefObject<HTMLDivElement | null>,
   firstRender: RefObject<boolean>,
@@ -27,7 +28,7 @@ type MessageContextType = {
 const MessagesContext = createContext<MessageContextType | undefined>(undefined);
 
 export function MessageProvider({ children }: { children: React.ReactNode }) {
-  const { activeContactId, initialMessageInputs } = useContact();
+  const { activeContactId, initialMessageInputs, currentContact } = useContact();
   const [state, send] = useReducer(messageReducer, initialState);
   const [loading, setLoading] = useState<boolean>(true);
   const [messageInputs, setMessageInputs] = useState<MessageInput[] | undefined>(initialMessageInputs);
@@ -67,8 +68,7 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
     );
   }
 
-
-  const sendMessage = (e: FormEvent<HTMLFormElement>) => {
+  const sendMessage = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!conversations || !activeContactId) return null;
@@ -84,7 +84,7 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
       return null
     }
 
-    const newMessage: Message = { sender: "user", content: message }
+    const newMessage: Message = { role: "user", content: message }
 
     firstRender.current = false;
 
@@ -105,33 +105,55 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
     sendMessagesToLocaleStorage(conversations);
   }, [conversations]);
 
+
+
   // useEffect to render "partner is writing" icon
   useEffect(() => {
-    console.log(state.status);
     if (state.status === Status.WAITING_FOR_RESPONSE) {
+      setIsWriting({
+        isTrue: true,
+        contact_id: activeContactId
+      });
       //TODO: Handle AI chatbot response here.
-      const startTypingTimeout = setTimeout(() => {
-        setIsWriting({
-          isTrue: true,
-          contact_id: activeContactId
-        });
-      }, 1000);
+      if (messageFeed && messageFeed[messageFeed.length - 1].role === "user") {
+        (async () => {
+          const { newMessage, error } = await getResponseMessageFromApi(conversation?.messages);
 
-      const stopTypingTimeout = setTimeout(() => {
-        send({ type: ActionType.SET_IDLE })
-      }, 3000);
+          if (error) {
+            setIsWriting({
+              isTrue: false,
+              contact_id: null,
+            });
+          }
 
-      return () => {
-        clearTimeout(stopTypingTimeout)
-        clearTimeout(startTypingTimeout)
+          if (newMessage) {
+            setIsWriting({
+              isTrue: false,
+              contact_id: null
+            });
+
+            setTimeout(() => {
+              setConversations((prev) => {
+                if (!prev) return null;
+
+                return prev.map((conv) =>
+                  conv.contact_id === activeContactId ? { ...conv, messages: [...conv.messages, newMessage] } : conv
+                );
+              });
+            }, 500);
+          }
+
+          send({ type: ActionType.SET_IDLE });
+        }
+        )();
       }
+    } else {
+      setIsWriting({
+        isTrue: false,
+        contact_id: null
+      });
     }
-
-    setIsWriting({
-      isTrue: false,
-      contact_id: null
-    });
-  }, [state.status]);
+  }, [state.status, messageFeed?.length]);
 
   // useEffect to scroll to the bottom each time
   useEffect(() => {
