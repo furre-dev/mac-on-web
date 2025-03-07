@@ -1,9 +1,4 @@
-import { createContext, Dispatch, RefObject, SetStateAction, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
-import { contacts } from "@/utils/database/contacts/contacts";
-import { Contact, ContactId } from "@/types/contactTypes";
-import { initialConversations } from "@/utils/database/messages/messages";
-import { Message, MessageFeed, MessageInput } from "@/types/messageTypes";
-import { getMessagesFromLocaleStorage } from "@/utils/localeStorageMessages";
+import { createContext, useContext, useState } from "react";
 import { Application } from "@/types/applicationTypes";
 
 type ApplicationsContextType = {

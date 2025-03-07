@@ -14,7 +14,11 @@ function ChatSection() {
     sendMessage,
     scrollViewRef,
     firstRender,
-    isWriting } = useMessage();
+    isWriting,
+  } = useMessage();
+
+  console.log("animateChat", !firstRender.current)
+
 
   return (
     <div className="w-2/4 h-full bg-white flex flex-col">
@@ -23,7 +27,8 @@ function ChatSection() {
         isWriting={isWriting?.isTrue}
         animateChat={!firstRender.current}
         ref={scrollViewRef}
-        messageFeed={messageFeed} />
+        messageFeed={messageFeed}
+      />
       <MessageInput
         inputValue={currentValue}
         sendMessage={sendMessage}

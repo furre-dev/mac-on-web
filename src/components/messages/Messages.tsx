@@ -33,6 +33,7 @@ function Messages({ messageFeed, ref, animateChat, isWriting }: MessageProps) {
                   sameSenderAsPrev={sameSenderAsPrev}
                   animateChat={animateChat}
                   key={i}
+                  isLink={message.isLink}
                   content={message.content}
                   role={message.role}
                   isLast={isLast}

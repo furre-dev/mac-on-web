@@ -1,3 +1,4 @@
+import { UrlApiResponse } from "@/utils/api/getUrlMetadata"
 import { ContactId } from "./contactTypes"
 
 export type MessageSender = "user" | "system"
@@ -5,6 +6,7 @@ export type MessageSender = "user" | "system"
 export type Message = {
   role: MessageSender,
   content: string,
+  isLink?: UrlApiResponse
 }
 
 export type MessageFeed = Message[] | undefined

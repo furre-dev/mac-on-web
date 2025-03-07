@@ -7,6 +7,8 @@ import { useContact } from "./ContactContext";
 import { ActionType, initialState, messageReducer, Status } from "@/utils/messageReducer";
 import { messageFromInput } from "@/utils/messageFromInput";
 import { getResponseMessageFromApi } from "@/utils/api/getResponseMessageFromApi";
+import { isValidUrl } from "@/utils/isValidUrl";
+import { getUrlMetadata, UrlApiResponse } from "@/utils/api/getUrlMetadata";
 
 type IsWriting = {
   isTrue: boolean,
@@ -17,18 +19,18 @@ type MessageContextType = {
   currentValue: string,
   updateMessageInput: (e: ChangeEvent<HTMLInputElement>) => null | undefined,
   sendMessage: (e: FormEvent<HTMLFormElement>) => Promise<null | undefined>,
-  messageFeed: MessageFeed | null,
+  messageFeed: MessageFeed,
   scrollViewRef: RefObject<HTMLDivElement | null>,
   firstRender: RefObject<boolean>,
   isWriting: IsWriting | null,
-  findMessageFeedByID: (id: ContactId | null) => Message[] | undefined,
+  findMessageFeedByID: (id: ContactId | null) => MessageFeed,
   loading: boolean
 };
 
 const MessagesContext = createContext<MessageContextType | undefined>(undefined);
 
 export function MessageProvider({ children }: { children: React.ReactNode }) {
-  const { activeContactId, initialMessageInputs, currentContact } = useContact();
+  const { activeContactId, initialMessageInputs } = useContact();
   const [state, send] = useReducer(messageReducer, initialState);
   const [loading, setLoading] = useState<boolean>(true);
   const [messageInputs, setMessageInputs] = useState<MessageInput[] | undefined>(initialMessageInputs);
@@ -36,10 +38,13 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
   const [isWriting, setIsWriting] = useState<IsWriting | null>(null);
   const scrollViewRef = useRef<HTMLDivElement | null>(null);
   const firstRender = useRef(true);
+  const linksValidated = useRef(false);
 
   const currentValue = messageInputs?.find((input) => input.contact_id === activeContactId)?.message ?? "";
   const conversation = conversations?.find((c) => c.contact_id === activeContactId);
   const messageFeed = conversation?.messages;
+
+
 
   useEffect(() => {
     setLoading(false);
@@ -96,16 +101,45 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
       );
     });
 
-    send({ type: ActionType.SEND_MESSAGE });
+    if (activeContactId === "ba64641f-9ac8-4470-a310-2bf31e2b2e4e") {
+      send({ type: ActionType.SEND_MESSAGE });
+    }
   };
 
   useEffect(() => {
     if (!conversations) return;
 
+    // here we go through ALL of the messages in each conversation.
+    // We check each message if the message is a link, if already asigned it's link values we don't do anything.
+    // If it's a new message we try to fetch it's Link Metadata and asign it. And then we save the message with it's correct values to our LocalStorage
+
+    // ONLY if it's the initial render.
+    if (linksValidated.current === false) {
+      linksValidated.current = true;
+      //async iife to fetch correct Link Metadata for each message with content of valid link.
+      (async () => {
+        const conversationsWithLinks: Conversation[] = await Promise.all(
+          conversations.map(async (conversation) => {
+            const messages: MessageFeed = await Promise.all(conversation.messages.map(async (message) => {
+              // If message is a link and message.isLink is not defined yet.
+              if (isValidUrl(message.content) && message.isLink === undefined) {
+                const data = await getUrlMetadata(message.content);
+                if (data) {
+                  return { ...message, isLink: data }
+                }
+              }
+              return message
+            }));
+            return { ...conversation, messages: messages }
+          })
+        )
+
+        setConversations(conversationsWithLinks);
+      })()
+    }
+
     sendMessagesToLocaleStorage(conversations);
   }, [conversations]);
-
-
 
   // useEffect to render "partner is writing" icon
   useEffect(() => {
@@ -159,19 +193,22 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (scrollViewRef.current) {
       if (firstRender.current === true) {
+        console.log("EVE")
         scrollViewRef.current.scrollIntoView({ behavior: "instant" });
-        firstRender.current = false;
       } else {
         scrollViewRef.current.scrollIntoView({ behavior: "smooth" });
       }
     };
-  }, [messageFeed?.length, isWriting]);
+  }, [messageFeed?.length, isWriting, activeContactId]);
 
   useEffect(() => {
     firstRender.current = true;
     const messagesFromLocaleStorage = getMessagesFromLocaleStorage();
+
     let conversations = messagesFromLocaleStorage || initialConversations;
+
     const currentConversation = conversations.find((c) => c.contact_id === activeContactId);
+
     if (!currentConversation && activeContactId) {
       conversations.push({
         contact_id: activeContactId,

@@ -7,5 +7,34 @@
         "content": "Hello, and welcome to my website! My name is Furkan, and I'm here to assist you with any questions you may have. Feel free to ask about my interests, such as my favorite hobbies or preferred programming language!"
       }
     ]
+  },
+  {
+    "contact_id": "2dcb4ea1-0f95-499e-b511-2605996eca41",
+    "messages": [
+      {
+        "role": "system",
+        "content": "https://github.com/furre-dev/mac-on-web"
+      },
+      {
+        "role": "system",
+        "content": "https://github.com/furre-dev/macos-backend"
+      },
+      {
+        "role": "system",
+        "content": "https://github.com/furre-dev/wolt-internship/"
+      },
+      {
+        "role": "system",
+        "content": "https://github.com/furre-dev/furkan-sbab"
+      },
+      {
+        "role": "system",
+        "content": "https://github.com/furre-dev/sbab-api"
+      },
+      {
+        "role": "system",
+        "content": "https://github.com/furre-dev/convini-backend"
+      }
+    ]
   }
 ]

@@ -6,7 +6,7 @@ import localFont from "next/font/local"
 import { ContactProvider } from "@/components/context/ContactContext";
 import { MessageProvider } from "@/components/context/MessagesContext";
 
-const SFProDisplay = localFont({
+const SFProText = localFont({
   src: [
     {
       path: "./fonts/SFProText-Regular.woff2",
@@ -34,7 +34,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${SFProDisplay.className} antialiased min-h-screen overflow-hidden flex justify-center`}>
+      <body className={`${SFProText.className} antialiased min-h-screen overflow-hidden flex justify-center`}>
         <ContactProvider>
           <MessageProvider>
             {children}

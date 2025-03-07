@@ -5,7 +5,7 @@ import { memo, useState } from "react";
 import { useApplications } from "./context/ApplicationsContext";
 
 function MacThreeButtons({ application_name }: { application_name: string }) {
-  const { closeApp } = useApplications()
+  const { closeApp } = useApplications();
   const [hovering, setHovering] = useState<boolean | null>(null);
 
   const buttonBehaviourMap: ButtonBehaviourMap = {
