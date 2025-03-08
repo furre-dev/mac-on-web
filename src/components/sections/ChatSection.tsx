@@ -17,8 +17,6 @@ function ChatSection() {
     isWriting,
   } = useMessage();
 
-  console.log("animateChat", !firstRender.current)
-
 
   return (
     <div className="w-2/4 h-full bg-white flex flex-col">

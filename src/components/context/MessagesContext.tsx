@@ -8,7 +8,7 @@ import { ActionType, initialState, messageReducer, Status } from "@/utils/messag
 import { messageFromInput } from "@/utils/messageFromInput";
 import { getResponseMessageFromApi } from "@/utils/api/getResponseMessageFromApi";
 import { isValidUrl } from "@/utils/isValidUrl";
-import { getUrlMetadata, UrlApiResponse } from "@/utils/api/getUrlMetadata";
+import { getUrlMetadata } from "@/utils/api/getUrlMetadata";
 
 type IsWriting = {
   isTrue: boolean,
@@ -30,7 +30,7 @@ type MessageContextType = {
 const MessagesContext = createContext<MessageContextType | undefined>(undefined);
 
 export function MessageProvider({ children }: { children: React.ReactNode }) {
-  const { activeContactId, initialMessageInputs } = useContact();
+  const { activeContactId, initialMessageInputs, currentContact } = useContact();
   const [state, send] = useReducer(messageReducer, initialState);
   const [loading, setLoading] = useState<boolean>(true);
   const [messageInputs, setMessageInputs] = useState<MessageInput[] | undefined>(initialMessageInputs);
@@ -45,6 +45,7 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
   const messageFeed = conversation?.messages;
 
 
+  console.log(currentContact?.canReply)
 
   useEffect(() => {
     setLoading(false);
@@ -101,7 +102,7 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
       );
     });
 
-    if (activeContactId === "ba64641f-9ac8-4470-a310-2bf31e2b2e4e") {
+    if (currentContact?.canReply) {
       send({ type: ActionType.SEND_MESSAGE });
     }
   };
@@ -193,7 +194,6 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (scrollViewRef.current) {
       if (firstRender.current === true) {
-        console.log("EVE")
         scrollViewRef.current.scrollIntoView({ behavior: "instant" });
       } else {
         scrollViewRef.current.scrollIntoView({ behavior: "smooth" });

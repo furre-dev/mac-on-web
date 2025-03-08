@@ -4,7 +4,7 @@ import ContactSection from "@/components/sections/ContactSection";
 import useDrag from "@/hooks/useDrag";
 
 export default function IMessage() {
-  //custom hook to handle the drag effect
+  // Custom hook to handle the drag effect
   const { handleMouseClick, position } = useDrag();
 
   return (
