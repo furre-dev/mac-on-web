@@ -15,12 +15,12 @@ export const applications: Application[] = [
   },
   {
     application_name: "safari",
-    component: () => AppDoesNotExist({ application_name: "safari" }),
+    component: null,
     image_src: SafariImage
   },
   {
     application_name: "mail",
-    component: () => AppDoesNotExist({ application_name: "mail" }),
+    component: null,
     image_src: MailImage
   }
 ];
