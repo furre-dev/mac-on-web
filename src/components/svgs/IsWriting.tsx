@@ -13,7 +13,7 @@ const staggerContainer = {
   },
 };
 
-export default function IsWriting({ invertColor }: { invertColor?: boolean }) {
+export default function IsWriting({ invertColor, animate }: { invertColor?: boolean, animate: boolean }) {
   const bubbleColor = invertColor ? "#569CFF" : "#E9E9EB";
   const dotColor = invertColor ? "#E8F1FF" : "#8D8D8E";
 
@@ -22,7 +22,7 @@ export default function IsWriting({ invertColor }: { invertColor?: boolean }) {
       layout
       initial={{ opacity: "0%", y: 10 }}
       animate={{ opacity: "100%", y: 0 }}
-      exit={{ opacity: 0, y: 10 }}
+      exit={animate ? { opacity: 0, y: 10 } : {}}
       transition={{ delay: 0.2 }}
       width="55" height="33" viewBox="0 0 55 33" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M5.2682 30.3892C5.2682 31.8311 4.08887 33 2.6341 33C1.17933 33 0 31.8311 0 30.3892C0 28.9474 1.17933 27.7785 2.6341 27.7785C4.08887 27.7785 5.2682 28.9474 5.2682 30.3892Z" fill={bubbleColor} />

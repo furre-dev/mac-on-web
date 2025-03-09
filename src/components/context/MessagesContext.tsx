@@ -10,7 +10,7 @@ import { getResponseMessageFromApi } from "@/utils/api/getResponseMessageFromApi
 import { isValidUrl } from "@/utils/isValidUrl";
 import { getUrlMetadata } from "@/utils/api/getUrlMetadata";
 
-type IsWriting = {
+export type IsWriting = {
   isTrue: boolean,
   contact_id: ContactId | null
 }
@@ -19,7 +19,7 @@ type MessageContextType = {
   currentValue: string,
   updateMessageInput: (e: ChangeEvent<HTMLInputElement>) => null | undefined,
   sendMessage: (e: FormEvent<HTMLFormElement>) => Promise<null | undefined>,
-  messageFeed: MessageFeed,
+  conversation: Conversation | undefined,
   scrollViewRef: RefObject<HTMLDivElement | null>,
   firstRender: RefObject<boolean>,
   isWriting: IsWriting | null,
@@ -30,7 +30,7 @@ type MessageContextType = {
 const MessagesContext = createContext<MessageContextType | undefined>(undefined);
 
 export function MessageProvider({ children }: { children: React.ReactNode }) {
-  const { activeContactId, initialMessageInputs, currentContact } = useContact();
+  const { initialMessageInputs, currentContact } = useContact();
   const [state, send] = useReducer(messageReducer, initialState);
   const [loading, setLoading] = useState<boolean>(true);
   const [messageInputs, setMessageInputs] = useState<MessageInput[] | undefined>(initialMessageInputs);
@@ -40,12 +40,9 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
   const firstRender = useRef(true);
   const linksValidated = useRef(false);
 
-  const currentValue = messageInputs?.find((input) => input.contact_id === activeContactId)?.message ?? "";
-  const conversation = conversations?.find((c) => c.contact_id === activeContactId);
+  const currentValue = messageInputs?.find((input) => input.contact_id === currentContact?.id)?.message ?? "";
+  const conversation = conversations?.find((c) => c.contact_id === currentContact?.id);
   const messageFeed = conversation?.messages;
-
-
-  console.log(currentContact?.canReply)
 
   useEffect(() => {
     setLoading(false);
@@ -60,14 +57,14 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
   }
 
   const updateMessageInput = (e: ChangeEvent<HTMLInputElement>) => {
-    if (!activeContactId || !messageInputs) return null;
+    if (!currentContact?.id || !messageInputs) return null;
 
     const message = e.target.value;
 
     // only affect the input of the current contact.
     setMessageInputs((prevMessages) =>
       prevMessages?.map((input) =>
-        input.contact_id === activeContactId
+        input.contact_id === currentContact?.id
           ? { ...input, message }
           : input
       )
@@ -77,11 +74,11 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
   const sendMessage = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!conversations || !activeContactId) return null;
+    if (!conversations || !currentContact?.id) return null;
 
     setMessageInputs((prev) => {
       return prev?.map((input) =>
-        input.contact_id === activeContactId ? { ...input, message: "" } : input
+        input.contact_id === currentContact?.id ? { ...input, message: "" } : input
       );
     });
 
@@ -98,7 +95,7 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
       if (!prev) return null;
 
       return prev.map((conv) =>
-        conv.contact_id === activeContactId ? { ...conv, messages: [...conv.messages, newMessage] } : conv
+        conv.contact_id === currentContact?.id ? { ...conv, messages: [...conv.messages, newMessage] } : conv
       );
     });
 
@@ -121,7 +118,7 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
       (async () => {
         const conversationsWithLinks: Conversation[] = await Promise.all(
           conversations.map(async (conversation) => {
-            const messages: MessageFeed = await Promise.all(conversation.messages.map(async (message) => {
+            const messages: Message[] = await Promise.all(conversation.messages.map(async (message) => {
               // If message is a link and message.isLink is not defined yet.
               if (isValidUrl(message.content) && message.isLink === undefined) {
                 const data = await getUrlMetadata(message.content);
@@ -145,10 +142,12 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
   // useEffect to render "partner is writing" icon
   useEffect(() => {
     if (state.status === Status.WAITING_FOR_RESPONSE) {
-      setIsWriting({
-        isTrue: true,
-        contact_id: activeContactId
-      });
+      if (!isWriting?.isTrue) {
+        setIsWriting({
+          isTrue: true,
+          contact_id: currentContact?.id || null
+        });
+      }
       //TODO: Handle AI chatbot response here.
       if (messageFeed && messageFeed[messageFeed.length - 1].role === "user") {
         (async () => {
@@ -172,7 +171,7 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
                 if (!prev) return null;
 
                 return prev.map((conv) =>
-                  conv.contact_id === activeContactId ? { ...conv, messages: [...conv.messages, newMessage] } : conv
+                  conv.contact_id === currentContact?.id ? { ...conv, messages: [...conv.messages, newMessage] } : conv
                 );
               });
             }, 500);
@@ -199,7 +198,7 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
         scrollViewRef.current.scrollIntoView({ behavior: "smooth" });
       }
     };
-  }, [messageFeed?.length, isWriting, activeContactId]);
+  }, [messageFeed?.length, isWriting, currentContact?.id]);
 
   useEffect(() => {
     firstRender.current = true;
@@ -207,24 +206,24 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
 
     let conversations = messagesFromLocaleStorage || initialConversations;
 
-    const currentConversation = conversations.find((c) => c.contact_id === activeContactId);
+    const currentConversation = conversations.find((c) => c.contact_id === currentContact?.id);
 
-    if (!currentConversation && activeContactId) {
+    if (!currentConversation && currentContact?.id) {
       conversations.push({
-        contact_id: activeContactId,
+        contact_id: currentContact?.id,
         messages: []
       })
     }
 
     setConversations(conversations);
-  }, [activeContactId]);
+  }, [currentContact?.id]);
 
   return (
     <MessagesContext.Provider value={{
       currentValue,
       updateMessageInput,
       sendMessage,
-      messageFeed,
+      conversation,
       scrollViewRef,
       firstRender,
       isWriting,

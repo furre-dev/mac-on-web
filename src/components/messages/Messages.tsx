@@ -7,16 +7,22 @@ import { memo, RefObject } from "react";
 import IsWriting from "../svgs/IsWriting";
 import { AnimatePresence } from "framer-motion";
 import { currentMessageData } from "@/utils/currentMessageData";
+import { IsWriting as IsWritingType } from "../context/MessagesContext";
+import { currentContactIsWriting } from "@/utils/currentContactIsWriting";
+import { Conversation } from "@/utils/database/messages/messages";
 
 type MessageProps = {
-  messageFeed: MessageFeed | null,
+  conversation: Conversation | undefined,
   ref: RefObject<HTMLDivElement | null>,
   animateChat: boolean,
-  isWriting?: boolean,
+  isWriting: IsWritingType | null,
 }
 
-function Messages({ messageFeed, ref, animateChat, isWriting }: MessageProps) {
+function Messages({ conversation, ref, animateChat, isWriting }: MessageProps) {
   const currentTime = getCurrentTime();
+
+  const currentIsWriting = currentContactIsWriting(conversation?.contact_id, isWriting);
+  const messageFeed = conversation?.messages;
 
   return (
     <div
@@ -41,7 +47,7 @@ function Messages({ messageFeed, ref, animateChat, isWriting }: MessageProps) {
               )
             })}
             <AnimatePresence mode="wait">
-              {isWriting && (<IsWriting />)}
+              {currentIsWriting && (<IsWriting />)}
             </AnimatePresence>
             <div ref={ref} className="w-full h-[1px]"></div>
           </ul>

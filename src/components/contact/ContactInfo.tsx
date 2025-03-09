@@ -4,6 +4,7 @@ import ContactInitials from "./ContactInitials";
 import { getLastMessage } from "@/utils/getLastMessage";
 import { useMessage } from "../context/MessagesContext";
 import IsWriting from "../svgs/IsWriting";
+import { currentContactIsWriting } from "@/utils/currentContactIsWriting";
 
 export default function ContactInfo({ contact, isActive }: { contact: Contact, isActive: boolean }) {
   const { findMessageFeedByID, loading, isWriting } = useMessage();
@@ -11,7 +12,7 @@ export default function ContactInfo({ contact, isActive }: { contact: Contact, i
   const feed = findMessageFeedByID(contact.id);
   const lastMessage = getLastMessage(feed);
 
-  const currentIsWriting = isWriting?.isTrue && isWriting.contact_id === contact.id
+  const currentIsWriting = currentContactIsWriting(contact.id, isWriting);
 
   return (
     <div className="flex h-full w-full">

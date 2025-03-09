@@ -4,7 +4,6 @@ import { Contact, ContactId } from "@/types/contactTypes";
 import { MessageInput } from "@/types/messageTypes";
 
 type ContactContextType = {
-  activeContactId: ContactId | null;
   setActive: (id: ContactId) => void;
   isActiveContact: (contact: Contact) => boolean
   currentContact: Contact | undefined;
@@ -35,7 +34,6 @@ export function ContactProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <ContactContext.Provider value={{
-      activeContactId,
       setActive,
       isActiveContact,
       currentContact,

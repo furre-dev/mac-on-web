@@ -8,7 +8,7 @@ import NavWithContactName from "../messages/NavWithContactName";
 function ChatSection() {
   const { currentContact } = useContact();
   const {
-    messageFeed,
+    conversation,
     updateMessageInput,
     currentValue,
     sendMessage,
@@ -22,10 +22,10 @@ function ChatSection() {
     <div className="w-2/4 h-full bg-white flex flex-col">
       <NavWithContactName currentContact={currentContact} />
       <Messages
-        isWriting={isWriting?.isTrue}
+        isWriting={isWriting}
         animateChat={!firstRender.current}
         ref={scrollViewRef}
-        messageFeed={messageFeed}
+        conversation={conversation}
       />
       <MessageInput
         inputValue={currentValue}
