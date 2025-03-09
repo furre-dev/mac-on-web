@@ -47,7 +47,7 @@ function Messages({ conversation, ref, animateChat, isWriting }: MessageProps) {
               )
             })}
             <AnimatePresence mode="wait">
-              {currentIsWriting && (<IsWriting />)}
+              {currentIsWriting && (<IsWriting animate={animateChat} />)}
             </AnimatePresence>
             <div ref={ref} className="w-full h-[1px]"></div>
           </ul>

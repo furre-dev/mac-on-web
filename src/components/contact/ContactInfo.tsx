@@ -21,7 +21,7 @@ export default function ContactInfo({ contact, isActive }: { contact: Contact, i
         <h4 className={`text-sm font-bold  ${isActive ? "text-white" : "text-[#414344]"}`}>
           {contact.contact_name}
         </h4>
-        {currentIsWriting ? <IsWriting invertColor /> : !loading ? (
+        {currentIsWriting ? <IsWriting invertColor animate /> : !loading ? (
           <p className={`text-xs mt-0.5 font-medium ${isActive ? "text-[#D3E5FF]" : "text-[#636F76]"}`}>
             {lastMessage}
           </p>
