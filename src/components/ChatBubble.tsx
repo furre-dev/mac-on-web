@@ -7,6 +7,7 @@ import Link from "next/link";
 import { useMessage } from "./context/MessagesContext";
 import { RefObject, useEffect, useRef } from "react";
 import LinkPreviewWithImage from "./messages/LinkPreviewWithImage";
+import SafariGray from "./svgs/SafariGray";
 
 type ChatBubbleProps = {
   message: Message,
@@ -27,12 +28,9 @@ export default function ChatBubble({ message, isLast, animateChat, sameSenderAsP
     }
   }, [isInView, messageBubbleRef]);
 
-
   const messageIsFromUser = message.role === "user";
   const chatColor = messageIsFromUser ? "#278EFF" : "#E9E8EB";
   const textColor = messageIsFromUser ? "#FFFFFF" : "#242424";
-
-
 
   if (message.isLink?.image) {
     return (
@@ -67,10 +65,11 @@ export default function ChatBubble({ message, isLast, animateChat, sameSenderAsP
       className={`${sameSenderAsPrev ? "" : "!mt-[10px]"} max-w-[64.92%] w-max rounded-[16.25px] text-[13px] relative ml-auto py-[6.5px] px-[11px] font-medium`}>
       {message.isLink?.webpage_url ? (
         <Link
-          className="text-blue-600"
+          className="text-[#666668] flex items-center"
           target="_blank"
           href={message.content}>
           {message.isLink.webpage_url}
+          <SafariGray />
         </Link>)
         :
         (<p className="break-words">

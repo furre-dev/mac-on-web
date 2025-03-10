@@ -75,12 +75,12 @@
       {
         "message_id": "4a5adb81-f24a-4ae6-ade8-b8327910b7a3",
         "role": "system",
-        "content": "My phone number is +46760716412"
+        "content": "My phone number: +46760716412"
       },
       {
         "message_id": "1d3dc141-c4c6-4ccb-b4c3-acee2b1eb82f",
         "role": "system",
-        "content": "My email address is furkan_abay@hotmail.com"
+        "content": "My email address: furkan_abay@hotmail.com"
       },
       {
         "message_id": "18e69e5c-3bca-47ba-b0e7-56ce1efba691",
