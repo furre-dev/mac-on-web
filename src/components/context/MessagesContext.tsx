@@ -1,7 +1,7 @@
 import { ChangeEvent, createContext, FormEvent, RefObject, useCallback, useContext, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import { ContactId } from "@/types/contactTypes";
 import { Conversation, initialConversations } from "@/utils/database/messages/messages";
-import { Message, MessageFeed, MessageInput } from "@/types/messageTypes";
+import { Message, MessageFeed, MessageInput, MessageUUID } from "@/types/messageTypes";
 import { getMessagesFromLocaleStorage, sendMessagesToLocaleStorage } from "@/utils/localeStorageMessages";
 import { useContact } from "./ContactContext";
 import { ActionType, initialState, messageReducer, Status } from "@/utils/messageReducer";
@@ -9,6 +9,9 @@ import { messageFromInput } from "@/utils/messageFromInput";
 import { getResponseMessageFromApi } from "@/utils/api/getResponseMessageFromApi";
 import { isValidUrl } from "@/utils/isValidUrl";
 import { getUrlMetadata } from "@/utils/api/getUrlMetadata";
+import { v4 as uuidv4 } from 'uuid';
+import { getLastMessage } from "@/utils/getLastMessage";
+
 
 export type IsWriting = {
   isTrue: boolean,
@@ -20,10 +23,12 @@ type MessageContextType = {
   updateMessageInput: (e: ChangeEvent<HTMLInputElement>) => null | undefined,
   sendMessage: (e: FormEvent<HTMLFormElement>) => Promise<null | undefined>,
   conversation: Conversation | undefined,
+  setMessageHasBeenRead: (msg_id: MessageUUID) => void;
   scrollViewRef: RefObject<HTMLDivElement | null>,
   firstRender: RefObject<boolean>,
   isWriting: IsWriting | null,
-  findMessageFeedByID: (id: ContactId | null) => MessageFeed,
+  getLastMessageFromFeed: (id: ContactId | null) => string | null,
+  contactHasUnreadMessages: (contact_id: ContactId) => boolean,
   loading: boolean
 };
 
@@ -48,12 +53,12 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
     setLoading(false);
   }, []);
 
-  const findMessageFeedByID = (id: ContactId | null) => {
-    const messagesFromLocaleStorage = getMessagesFromLocaleStorage();
+  const getLastMessageFromFeed = (id: ContactId | null) => {
+    const messageFeed = conversations?.find((convo) => convo.contact_id === id)?.messages
 
-    const messageFeed = messagesFromLocaleStorage?.find((msg) => msg.contact_id === id)?.messages ?? initialConversations.find((msg) => msg.contact_id === id)?.messages;
+    const lastMessage = getLastMessage(messageFeed);
 
-    return messageFeed;
+    return lastMessage;
   }
 
   const updateMessageInput = (e: ChangeEvent<HTMLInputElement>) => {
@@ -71,10 +76,14 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
     );
   }
 
+
+
   const sendMessage = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!conversations || !currentContact?.id) return null;
+
+    const message_uuid = uuidv4();
 
     setMessageInputs((prev) => {
       return prev?.map((input) =>
@@ -87,7 +96,7 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
       return null
     }
 
-    const newMessage: Message = { role: "user", content: message }
+    const newMessage: Message = { role: "user", content: message, message_id: message_uuid }
 
     firstRender.current = false;
 
@@ -103,6 +112,47 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
       send({ type: ActionType.SEND_MESSAGE });
     }
   };
+
+  const setMessageHasBeenRead = (msg_id: MessageUUID) => {
+    if (!messageFeed) return;
+    const targetMessage = messageFeed.find((message) => message.message_id === msg_id);
+    // if we can't find the message, or if the message is already read.
+    if (!targetMessage || targetMessage.readAt) return;
+
+    const timeStamp = Date.now();
+
+    setConversations((prev) => {
+      if (!prev) return null;
+
+      return prev.map((conv) => {
+        if (conv.contact_id !== currentContact?.id) return conv;
+
+        return {
+          ...conv,
+          messages: conv.messages.map((msg) => {
+            return msg.message_id === targetMessage.message_id ? { ...msg, readAt: timeStamp } : msg
+          })
+        }
+      })
+    });
+  };
+
+  const contactHasUnreadMessages = (contact_id: ContactId) => {
+    const contactConversation = conversations?.find((conv) => conv.contact_id === contact_id);
+    if (!contactConversation) return false;
+
+    // this will return only the recieved messages from the current conversation.
+    const recievedMessages = contactConversation.messages.map((message) => {
+      if (message.role === "system") return message;
+    }).filter((msg) => msg !== undefined);
+
+    const recievedMessagesContainsUnreadMessages = recievedMessages.map((msg) => {
+      return msg.readAt ? false : true;
+    }).includes(true);
+
+    return recievedMessagesContainsUnreadMessages;
+
+  }
 
   useEffect(() => {
     if (!conversations) return;
@@ -121,10 +171,8 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
             const messages: Message[] = await Promise.all(conversation.messages.map(async (message) => {
               // If message is a link and message.isLink is not defined yet.
               if (isValidUrl(message.content) && message.isLink === undefined) {
-                const data = await getUrlMetadata(message.content);
-                if (data) {
-                  return { ...message, isLink: data }
-                }
+                const linkData = await getUrlMetadata(message.content);
+                return linkData ? { ...message, isLink: linkData } : message
               }
               return message
             }));
@@ -223,11 +271,13 @@ export function MessageProvider({ children }: { children: React.ReactNode }) {
       currentValue,
       updateMessageInput,
       sendMessage,
+      setMessageHasBeenRead,
       conversation,
       scrollViewRef,
       firstRender,
       isWriting,
-      findMessageFeedByID,
+      getLastMessageFromFeed,
+      contactHasUnreadMessages,
       loading
     }}>
       {children}

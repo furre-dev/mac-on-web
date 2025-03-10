@@ -3,6 +3,7 @@
     "contact_id": "ba64641f-9ac8-4470-a310-2bf31e2b2e4e",
     "messages": [
       {
+        "message_id": "d3f93b58-9b42-4a8d-a9f4-3c7e2e5b91e1",
         "role": "system",
         "content": "Hello, and welcome to my website! My name is Furkan, and I'm here to assist you with any questions you may have. Feel free to ask about my interests, such as my favorite hobbies or preferred programming language!"
       }
@@ -12,28 +13,79 @@
     "contact_id": "2dcb4ea1-0f95-499e-b511-2605996eca41",
     "messages": [
       {
+        "message_id": "f8c2d564-15d5-4d6d-a4de-2e14e3e3a2b2",
         "role": "system",
         "content": "https://github.com/furre-dev/mac-on-web"
       },
       {
+        "message_id": "c98ea786-4d92-41bb-b3c5-5a9d3f96fdf1",
         "role": "system",
         "content": "https://github.com/furre-dev/macos-backend"
       },
       {
+        "message_id": "b6e2d914-0935-4fd7-b00f-6a983df29e5a",
         "role": "system",
         "content": "https://github.com/furre-dev/wolt-internship/"
       },
       {
+        "message_id": "af7c8e1d-642f-4c3d-8efb-8143b97a8cb1",
         "role": "system",
         "content": "https://github.com/furre-dev/furkan-sbab"
       },
       {
+        "message_id": "e2f9c7a3-5c27-4d2e-93e3-bf685c8a9a7f",
         "role": "system",
         "content": "https://github.com/furre-dev/sbab-api"
       },
       {
+        "message_id": "a8b4d2f7-913d-4df4-94f6-bcb3e3e8c3e4",
         "role": "system",
         "content": "https://github.com/furre-dev/convini-backend"
+      }
+    ]
+  },
+  {
+    "contact_id": "154feadd-b239-48b2-954e-a0750785df02",
+    "messages": [
+      {
+        "message_id": "6d7a9b45-3c2e-4dcb-a8e7-42d4b91e2a3f",
+        "role": "system",
+        "content": "I worked at Hava and Diet Doctor from May 2023 to March 2024, contributing to both projects within the same company. For Hava, I was the creator of the project and took full ownership of the webpage, ensuring the web app was production-ready for its official launch. In contrast, Diet Doctor had a decade-old codebase with contributions from numerous developers over the years. My role primarily involved maintenance and implementing new features, though the majority of my time was dedicated to Hava."
+      },
+      {
+        "message_id": "d4c3b9a7-4f28-4d4e-b2a5-79e3c1f5d6e9",
+        "role": "system",
+        "content": "I'll share the official website links for both projects below!"
+      },
+      {
+        "message_id": "e7f9b1c4-3d52-41e4-a8a7-2b9c8d7f5a6e",
+        "role": "system",
+        "content": "https://hava.co"
+      },
+      {
+        "message_id": "f3b8a2d9-5c47-42a3-8e5b-7c1d9e4a6f8b",
+        "role": "system",
+        "content": "https://dietdoctor.com"
+      }
+    ]
+  },
+  {
+    "contact_id": "1b1012b1-6b10-474a-84f2-5d3ea7a9b276",
+    "messages": [
+      {
+        "message_id": "4a5adb81-f24a-4ae6-ade8-b8327910b7a3",
+        "role": "system",
+        "content": "My phone number is +46760716412"
+      },
+      {
+        "message_id": "1d3dc141-c4c6-4ccb-b4c3-acee2b1eb82f",
+        "role": "system",
+        "content": "My email address is furkan_abay@hotmail.com"
+      },
+      {
+        "message_id": "18e69e5c-3bca-47ba-b0e7-56ce1efba691",
+        "role": "system",
+        "content": "https://www.linkedin.com/in/furre-dev/"
       }
     ]
   }

@@ -3,10 +3,14 @@ import { ContactId } from "./contactTypes"
 
 export type MessageSender = "user" | "system"
 
+export type MessageUUID = string;
+
 export type Message = {
+  message_id: MessageUUID;
   role: MessageSender,
   content: string,
   isLink?: UrlApiResponse
+  readAt?: number;
 }
 
 export type MessageFeed = Message[] | undefined

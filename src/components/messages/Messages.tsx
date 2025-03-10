@@ -3,7 +3,7 @@ import { isLastMessage } from "@/utils/isLastMessage";
 import ChatBubble from "../ChatBubble";
 import { MessageFeed } from "@/types/messageTypes";
 import { getCurrentTime } from "@/utils/getCurrentTime";
-import { memo, RefObject } from "react";
+import { memo, RefObject, useRef } from "react";
 import IsWriting from "../svgs/IsWriting";
 import { AnimatePresence } from "framer-motion";
 import { currentMessageData } from "@/utils/currentMessageData";
@@ -16,9 +16,10 @@ type MessageProps = {
   ref: RefObject<HTMLDivElement | null>,
   animateChat: boolean,
   isWriting: IsWritingType | null,
+  messageContainer: RefObject<HTMLDivElement | null>
 }
 
-function Messages({ conversation, ref, animateChat, isWriting }: MessageProps) {
+function Messages({ conversation, ref, animateChat, isWriting, messageContainer }: MessageProps) {
   const currentTime = getCurrentTime();
 
   const currentIsWriting = currentContactIsWriting(conversation?.contact_id, isWriting);
@@ -36,13 +37,12 @@ function Messages({ conversation, ref, animateChat, isWriting }: MessageProps) {
               const { isLast, sameSenderAsPrev } = currentMessageData(messageFeed, i);
               return (
                 <ChatBubble
+                  message={message}
                   sameSenderAsPrev={sameSenderAsPrev}
                   animateChat={animateChat}
                   key={i}
-                  isLink={message.isLink}
-                  content={message.content}
-                  role={message.role}
                   isLast={isLast}
+                  container={messageContainer}
                 />
               )
             })}

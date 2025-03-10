@@ -1,4 +1,5 @@
 import { Message } from "@/types/messageTypes";
+import { v4 as uuidv4 } from 'uuid';
 
 type ApiResponse = {
   response: string
@@ -30,9 +31,12 @@ export async function getResponseMessageFromApi(messages: Message[] | undefined)
       }),
     });
     const data: ApiResponse = await response.json();
+
+    const message_uuid = uuidv4();
     const message: Message = {
       role: "system",
-      content: data.response
+      content: data.response,
+      message_id: message_uuid
     };
     return { newMessage: message, error: null };
   } catch (e) {

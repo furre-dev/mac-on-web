@@ -1,4 +1,4 @@
-import { memo } from "react";
+import { memo, useRef } from "react";
 import { useContact } from "../context/ContactContext";
 import { useMessage } from "../context/MessagesContext";
 import MessageInput from "../messages/MessageInput";
@@ -17,15 +17,20 @@ function ChatSection() {
     isWriting,
   } = useMessage();
 
+  const containerRef = useRef<HTMLDivElement>(null);
+
 
   return (
-    <div className="w-2/4 h-full bg-white flex flex-col">
+    <div
+      ref={containerRef}
+      className="w-2/4 h-full bg-white flex flex-col">
       <NavWithContactName currentContact={currentContact} />
       <Messages
         isWriting={isWriting}
         animateChat={!firstRender.current}
         ref={scrollViewRef}
         conversation={conversation}
+        messageContainer={containerRef}
       />
       <MessageInput
         inputValue={currentValue}
