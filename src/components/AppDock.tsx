@@ -123,14 +123,16 @@ function AppIcon({
       ref={ref}
       style={{ x: xSpring, scale: scaleSpring, y, marginLeft: isTrashCan ? 10 : 0 }}
       onClick={() => {
-        animate(y, [0, -40, 0], {
-          repeat: 2,
-          ease: [
-            [0, 0, 0.2, 1],
-            [0.8, 0, 1, 1],
-          ],
-          duration: 0.7,
-        });
+        if (!isTrashCan) {
+          animate(y, [0, -40, 0], {
+            repeat: 2,
+            ease: [
+              [0, 0, 0.2, 1],
+              [0.8, 0, 1, 1],
+            ],
+            duration: 0.7,
+          });
+        }
         openApp(children.application_name)
       }}
       className="aspect-square block w-10 rounded-full origin-bottom"
