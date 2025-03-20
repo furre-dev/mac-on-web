@@ -32,7 +32,8 @@ export default function ChatBubble({ message, isLast, animateChat, sameSenderAsP
   const chatColor = messageIsFromUser ? "#278EFF" : "#E9E8EB";
   const textColor = messageIsFromUser ? "#FFFFFF" : "#242424";
 
-  if (message.isLink?.image) {
+  // if the message link data has image, and does not have any error, render the big chat bubble
+  if (message.isLink?.image && !message.isLink.error) {
     return (
       <m.li
         ref={messageBubbleRef}

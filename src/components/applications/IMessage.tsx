@@ -13,7 +13,7 @@ export default function IMessage() {
         top: `${position.y}px`,
         left: `${position.x}px`
       }}
-      className="w-[777px] h-[611px] rounded-[10px] flex overflow-hidden absolute shadow-[120px]">
+      className="w-[777px] h-[611px] max-h-[80%] rounded-[10px] flex overflow-hidden absolute shadow-[120px]">
       <ContactSection handleMouseClick={handleMouseClick} />
       <ChatSection />
     </div>

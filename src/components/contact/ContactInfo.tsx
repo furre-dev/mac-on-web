@@ -24,7 +24,9 @@ export default function ContactInfo({ contact, isActive }: { contact: Contact, i
           {contact.contact_name}
         </h4>
         {currentIsWriting ? <IsWriting invertColor animate /> : !loading ? (
-          <p className={`text-xs mt-0.5 font-medium ${isActive ? "text-[#D3E5FF]" : "text-[#636F76]"}`}>
+          <p
+            style={{ wordBreak: "break-all" }}
+            className={`text-xs mt-0.5 font-medium ${isActive ? "text-[#D3E5FF]" : "text-[#636F76]"}`}>
             {lastMessage}
           </p>
         ) : null}

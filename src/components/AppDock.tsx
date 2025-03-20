@@ -45,7 +45,7 @@ export default function Dock() {
           mouseLeft.set(-Infinity);
           mouseRight.set(-Infinity);
         }}
-        className="mx-auto hidden h-16 items-end gap-3 px-2 pb-3 sm:flex relative mt-auto mb-1"
+        className="mx-auto hidden h-16 items-end gap-3 px-2 pb-3 sm:flex relative mt-auto mb-1 z-[199999999]"
       >
         <motion.div
           className="absolute rounded-2xl inset-y-0 bg-gray-700 border border-gray-600 -z-10"

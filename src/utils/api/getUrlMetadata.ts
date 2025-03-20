@@ -7,7 +7,8 @@ export type UrlApiResponse = {
   title: string | null,
   description: string | null,
   image: string | null,
-  webpage_url: string
+  webpage_url: string,
+  error?: boolean
 }
 
 export async function getUrlMetadata(url: string): Promise<UrlApiResponse | null> {
@@ -30,6 +31,7 @@ export async function getUrlMetadata(url: string): Promise<UrlApiResponse | null
         description: null,
         image: null,
         webpage_url: baseUrl.hostname.replace(/^www\./, ''),
+        error: true
       }
     }
 

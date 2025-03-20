@@ -41,6 +41,36 @@
         "message_id": "a8b4d2f7-913d-4df4-94f6-bcb3e3e8c3e4",
         "role": "system",
         "content": "https://github.com/furre-dev/convini-backend"
+      },
+      {
+        "message_id": "a8b4d2f7-913d-4df4-94f6-bcb3e3e8c3e4",
+        "role": "system",
+        "content": "https://www.figma.com/design/ow1EJml0oOkxJs3XVx0TxH/Untitled?node-id=0-1&p=f&t=6wzsVq8Z2ttGqvNT-0"
+      },
+      {
+        "message_id": "a8b4d2f7-913d-4df4-94f6-bcb3e3e8c3e4",
+        "role": "system",
+        "content": "https://www.figma.com/design/P1tKeOOc4gl4vKS13iGOeI/Untitled?node-id=33-388&p=f&t=6wzsVq8Z2ttGqvNT-0"
+      },
+      {
+        "message_id": "a8b4d2f7-913d-4df4-94f6-bcb3e3e8c3e4",
+        "role": "system",
+        "content": "https://www.figma.com/design/jIrUCBK24hNNv8dEKUMQ9C/Untitled?node-id=0-1&p=f&t=6wzsVq8Z2ttGqvNT-0"
+      },
+      {
+        "message_id": "a8b4d2f7-913d-4df4-94f6-bcb3e3e8c3e4",
+        "role": "system",
+        "content": "https://www.figma.com/design/Qmae8uosARtadqmaw0pFRH/furkanPortfoliov4?node-id=406-233&p=f&t=6wzsVq8Z2ttGqvNT-0"
+      },
+      {
+        "message_id": "a8b4d2f7-913d-4df4-94f6-bcb3e3e8c3e4",
+        "role": "system",
+        "content": "https://www.figma.com/design/Qmae8uosARtadqmaw0pFRH/furkanPortfoliov4?node-id=0-1&p=f&t=6wzsVq8Z2ttGqvNT-0"
+      },
+      {
+        "message_id": "a8b4d2f7-913d-4df4-94f6-bcb3e3e8c3e4",
+        "role": "system",
+        "content": "https://www.figma.com/design/oqHZ7xMGKDRKdplo9EZ1Uf/Kaar.ai?node-id=0-1&p=f&t=6wzsVq8Z2ttGqvNT-0"
       }
     ]
   },

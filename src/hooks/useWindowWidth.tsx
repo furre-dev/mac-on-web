@@ -17,7 +17,7 @@ function useWindowWidth() {
     return () => window.removeEventListener('resize', updateWidth);
   }, []);
 
-  const smallDevice = width < 1000
+  const smallDevice = width < 800
 
   return { width, smallDevice };
 }
