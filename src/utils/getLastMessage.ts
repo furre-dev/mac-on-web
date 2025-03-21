@@ -12,7 +12,7 @@ export function getLastMessage(feed: MessageFeed) {
   const message = feed[length - 1].content;
 
   if (message.length > 79) {
-    return `${message.slice(0, 80).trim()}...`
+    return `${message.slice(0, 50).trim()}...`
   }
 
   return message

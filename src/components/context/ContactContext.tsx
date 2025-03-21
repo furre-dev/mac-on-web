@@ -8,6 +8,7 @@ type ContactContextType = {
   isActiveContact: (contact: Contact) => boolean
   currentContact: Contact | undefined;
   initialMessageInputs: MessageInput[] | undefined;
+  removeActiveContact: () => void;
 };
 
 const ContactContext = createContext<ContactContextType | undefined>(undefined);
@@ -17,6 +18,11 @@ export function ContactProvider({ children }: { children: React.ReactNode }) {
 
   const setActive = (contactId: ContactId) => {
     setActiveContact((prev) => (prev === contactId ? prev : contactId));
+  }
+
+  const removeActiveContact = () => {
+    console.log("ebem")
+    setActiveContact(null);
   }
 
   const isActiveContact = (contact: Contact) => activeContactId === contact.id;
@@ -38,6 +44,7 @@ export function ContactProvider({ children }: { children: React.ReactNode }) {
       isActiveContact,
       currentContact,
       initialMessageInputs,
+      removeActiveContact
     }}>
       {children}
     </ContactContext.Provider>

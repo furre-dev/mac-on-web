@@ -3,7 +3,7 @@ import ContactCard from "./ContactCard"
 import { memo, useMemo } from "react";
 import { useContact } from "../context/ContactContext";
 
-function ContactCards({ contacts }: { contacts: Contact[] | null }) {
+function ContactCards({ contacts, mobile }: { contacts: Contact[] | null, mobile?: boolean }) {
   const { setActive, isActiveContact } = useContact();
 
   if (!contacts) return null;
@@ -13,7 +13,8 @@ function ContactCards({ contacts }: { contacts: Contact[] | null }) {
 
     return (
       <ContactCard
-        contactAction={{ setActive, isActive }}
+        contactAction={{ setActive, isActive: mobile ? false : isActive }}
+        mobile={mobile ?? false}
         key={contact.id}
         contact={contact}
       />

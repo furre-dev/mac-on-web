@@ -26,7 +26,7 @@ export default function ContactInfo({ contact, isActive }: { contact: Contact, i
         {currentIsWriting ? <IsWriting invertColor animate /> : !loading ? (
           <p
             style={{ wordBreak: "break-all" }}
-            className={`text-xs mt-0.5 font-medium ${isActive ? "text-[#D3E5FF]" : "text-[#636F76]"}`}>
+            className={`text-xs mt-0.5 font-medium pr-6 md:pr-0 ${isActive ? "text-[#D3E5FF]" : "text-[#636F76]"}`}>
             {lastMessage}
           </p>
         ) : null}

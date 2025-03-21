@@ -14,9 +14,9 @@ export default function MessageInput({ updateMessageInput, inputValue, sendMessa
   return (
     <form
       onSubmit={sendMessage}
-      className="w-full py-[16px] px-3 flex justify-between items-center">
+      className="w-full flex justify-between items-center">
       <AppStore />
-      <div className="w-full h-[27px] border-[1.5px] border-[#BBBBBB] rounded-full pl-3 pr-1 mx-3 flex">
+      <div className="w-full h-[36px] md:h-[27px] border-[1.5px] border-[#BBBBBB] rounded-full pl-3 pr-1 mx-3 flex items-center">
         <input
           autoComplete="off"
           name="message"
