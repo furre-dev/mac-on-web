@@ -17,7 +17,7 @@ export default function MobileMessages() {
   const { currentContact } = useContact();
 
   return (
-    <main className="w-full min-h-screen bg-white pt-11 relative overflow-hidden">
+    <main className="w-full min-h-screen bg-white pt-5 relative overflow-hidden">
       <AnimatePresence mode="wait">
         {currentContact && (
           <MobileMessageFeed key={"mobileMessageFeed"} currentContact={currentContact} />
