@@ -1,6 +1,6 @@
 import { Conversation } from "./database/messages/messages";
 
-const VARIABLE_NAME = "messageFeedV2";
+const VARIABLE_NAME = "messageFeedV3";
 
 export function getMessagesFromLocaleStorage() {
   let parsedMessages: Conversation[] | null = null;

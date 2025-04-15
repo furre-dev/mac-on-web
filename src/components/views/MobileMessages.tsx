@@ -3,13 +3,6 @@ import ContactCards from "../contact/ContactCards";
 import MicIcon from "../svgs/MicIcon";
 import SmallMagnifyingGlass from "../svgs/SmallMagnifyingGlass";
 import { useContact } from "../context/ContactContext";
-import LeftArrow from "../svgs/LeftArrow";
-import ContactInitials from "../contact/ContactInitials";
-import FacetimeIcon from "../svgs/FacetimeIcon";
-import Messages from "../messages/Messages";
-import { useMessage } from "../context/MessagesContext";
-import { useRef } from "react";
-import MessageInput from "../messages/MessageInput";
 import MobileMessageFeed from "../messages/MobileMessageFeed";
 import { AnimatePresence } from "framer-motion";
 
